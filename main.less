@@ -1,0 +1,106 @@
+@lyft-color: #E70B81;
+@uber-grey: #c0c0c8;
+@uber-ltblue: #1fbad6;
+@uber-gray: #222233;
+@uber-graynavy: #161629;
+@uber-navy: #09091a;
+
+@font-light: 300;
+@font-regular: 400;
+@font-medium: 500;
+@font-bold: 700;
+
+@font-color: #4c4c4c;
+
+div {
+  color: @font-color;
+}
+
+.uber {
+  color: @uber-navy;
+}
+
+.lyft {
+  color: @lyft-color;
+}
+
+body {
+  font-family: 'Titillium Web', sans-serif;
+  background-color: #f0f0f0;
+  margin: 0 50px 0 50px;
+}
+
+h1 {
+  margin: 10px 0 0 0;
+  font-size: 3em;
+}
+
+h2 {
+  font-size: 1.5em;
+  line-height: 1.1em;
+  margin: 0 0 0 0;
+  font-weight: @font-light;
+}
+.page-title {
+  margin-bottom: 40px;
+}
+
+.section {
+  padding: 20px 0 20px 0;
+
+  .header {
+    font-size: 1.95em;
+
+    &::before {
+      content: "\27A4";
+      padding-right: 10px;
+      padding-left: 5px;
+    }
+  }
+  .text {
+    padding: 0 50px 0 50px;
+    text-align: justify;
+  }
+}
+
+svg {
+color: black
+}
+
+.graphic {
+  text-align: center;
+}
+
+/**
+MAP STYLING
+ */
+rect.bar {
+  fill: #4169e1;
+  fill-opacity: 0.5;
+}
+
+path.zone {
+  fill: #fff;
+  stroke: #888;
+}
+
+/**
+MATRIX STYLING
+ */
+.matrix {
+  .tick line {
+    display: none;
+  }
+  .domain {
+    display: none;
+  }
+}
+
+/**
+HISTOGRAM STYLING
+ */
+.histogram {
+  .tick line {
+    display: none;
+  }
+}

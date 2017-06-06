@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link href="https://fonts.googleapis.com/css?family=Titillium+Web" rel="stylesheet">
+
+    <link rel="stylesheet" href="main.css"/>
+
+</head>
+
+<body>
+
+<div class="page-title">
+    <h1>The Ebb and Flow of <span class="uber">Uber</span> and <span class="lyft">Lyft</span></h1>
+    <h2>Will Lyft disrupt Uber's market dominance?</h2>
+</div>
+<div class="section">
+    <div class="header">A Challenger Emerges</div>
+    <div class="text intro">
+        <p>On July 8th, 2014 Lyft <a
+                href="https://blog.lyft.com/posts/2014/7/8/lyft-launches-in-new-yorks-outer-boroughs"
+                target="_blank">
+            announced</a> that it would launch its ridesharing service in Brooklyn and Queens after months of
+            "unprecedented support" from city residents. In the two months that followed, it can be seen through the graphs and map below that Lyft enjoyed a nice bump in volume not only in Brooklyn and Queens, but throughout the city. 
+        </p>
+
+        <p>
+            The data we utilized was sourced from FiveThirtyEight's Freedom of Information request for <a
+                    href="https://github.com/fivethirtyeight/uber-tlc-foil-response" target="_blank">NYC taxi data</a>. The entire dataset contains the times and coordinates of all for-hire vehicle and ride-sharing vehicles in New York City during the second half of 2014 and the first half of 2015. The data was in .csv files, where each row contained a timestamp of the pick-up, latitude, longitude, and the taxi zone number where the pick-up occurred. </p>
+        <p>Because this data was too large to use all at once, we decided to focus only on the Uber and Lyft sections of the data, the top two ride-sharing applications. We also chose to use only two months worth of data from August to September 2014, as this was just after Lyft launched in Brooklyn.</p>
+        <p>In addition to the .csv files, we had a few other files to help display the data. We used a shape file to show New York City taxi zones on the screen that we obtained from the New York City Taxi and Limousine Commission website. We converted this to a GeoJSON file. From the same website, we used another .csv to go from taxi zone numbers to names and locations of the zones for mapping.</p>
+        <p>After paring down the amount of data used, we reformatted it to better suit the graphs we wanted to make. We did this by “binning” our data appropriately for each graph we wanted to use. For our histogram, we binned our data into a new .csv file containing a Date object and the count for the respective company of the number of rides that day. For the matrix plot, we binned the data by hour of each day and each day in the range of interest, and associated each hour with the number of pick-ups that happened during that hour for each company. Finally, for the map we binned the data into number of pick-ups by taxi zone. In all of these cases, we used d3.js to generate these new .csv files, reducing our dataset down to these easier-to-work-with files.</p>
+
+    </div>
+</div>
+
+<div class="section">
+    <div class="header">Zone Comparisons for Each NYC Borough</div>
+    <div class="text">
+        <p>Below is a map of the boroughs of NYC with the Taxi &amp; Limosine Commission zones overlayed. The color
+            gradient
+            represents the zones where one ridesharing company was more popular than its competitor normally was in that
+            zone.
+            Concretely, the map displays the differences in standard devations between Lyft and Uber for each zone
+            (normalized by their z-scores).</p>
+
+        <p>Lyft's emergence in Brooklyn and Queens accounts for its increase in relative popularity in the two months following the launch. Presumably, Lyft had a growing user
+            base
+            in these months and had a greater deviation from its "normal ridership" than Uber's deviation from its
+            "normal
+            ridership" in those areas. It also appears that some Lyft traffic (no pun intended) had leaked over into the
+            Lower East Side of Manhattan. Perhaps, the proximity of Brooklyn is responsible for this phenomenon. In
+            fact,
+            the Brooklyn, Manhattan, and Williamsburg Bridges connect the Lower East Side to Brooklyn. </p>
+
+        <p>A status
+            quo exists in the zones where there is a difference in standard deviations of 0.0. In essence, Uber
+            ridership
+            and Lyft ridership are both around normal in these zones. The zones where the color appears white are where Lyft had no ridership at the time. The two large black zones in Queens correspond to
+            LaGuardia and Kennedy Airports. Given Lyft's recent entrance into Queens, incoming travelers who were more
+            accustomed to Uber in other parts of the country would have been more inclined to continue using Uber upon their
+            arrival. </p>
+    </div>
+    <div class="graphic" id="map"></div>
+</div>
+
+
+<div class="section">
+    <div class="header">Rides per Day</div>
+    <div class="text">
+        This histogram clearly shows that there were slow rises in the number of rides for Uber throughtout the week, followed by peaks on the weekends. Uber also had a jump in rides in September, which could be from the beginning of the school year and the start of the Fall when people are busier. Oddly enough, Lyft experienced a relative decline in September. After the initial bump in volume following the emergence of Lyft in Brooklyn and Queens, it appears that it became less popular again, compared to Uber. From this, one can also see that Uber appears to be the leader among ridesharing companies in the five boroughs of NYC. That is, it had, and has, great staying power. It would be informative to look at data from 2017 to see how Lyft fares (no pun intended) against Uber.
+    </div>
+    <div class="graphic" id="plot"></div>
+
+</div>
+
+<div class="section">
+    <div class="header">Rides by Hour</div>
+    <div class="text">
+        <p>Here is a matrix which shows the relative ride volume for Uber and Lyft at all times of the day during August and September of 2014. The color
+            gradient
+            represents the times where one ridesharing company was more popular than its competitor normally was in that
+            time.
+            Concretely, the map displays the differences in standard devations between Lyft and Uber for each time
+            (normalized by their z-scores).</p>
+        <p> It is interesting to note that the "wave" following Lyft's launch in Brooklyn and Queens corresponds with an increased relative volume for Lyft in August. Furthermore, these peaks in volume happened primarily in the early hours of the morning, which, presumably are from people returning from nights out (it is the Summer after all).</p> <p>Uber appears to return to higher volume in the Fall, beginning in September. These peaks coincide with the end of the normal workday and push into later times on the weekends.</p>
+    </div>
+    <div class="graphic" id="matrix"></div>
+</div>
+
+
+<script src="//d3js.org/d3.v4.min.js"></script>
+<script src="//d3js.org/topojson.v2.min.js"></script>
+<script src="//d3js.org/d3-queue.v3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.21.0/d3-legend.js"></script>
+
+
+<script>
+    /**
+     * MAP VISUALIZATION
+     */
+    function computeMergedDicts(data) {
+        let regionCounts = {};
+
+        data.forEach(function (d) {
+            let region = d["region"];
+
+            if (region == -1) {
+                return;
+            }
+
+            if (regionCounts[region]) {
+                regionCounts[region] += d["count"];
+            } else {
+                regionCounts[region] = d["count"];
+            }
+        });
+
+        return regionCounts;
+    }
+
+    function getPercentMaps(uberData, lyftData) {
+        let uberAvg = 0;
+        let lyftAvg = 0;
+        let uberPer = {};
+        let lyftPer = {};
+
+        let uberRegions = d3.keys(uberData);
+        let lyftRegions = d3.keys(lyftData);
+
+        uberAvg = d3.mean(uberRegions,(d) => uberData[d]);
+        lyftAvg = d3.mean(lyftRegions, (d) => lyftData[d]);
+
+        let uberDev = d3.deviation(uberRegions,(d) => uberData[d]);
+        let lyftDev = d3.deviation(lyftRegions, (d) => lyftData[d]);
+
+        for (let key in uberData) { uberPer[key] = (uberData[key] - uberAvg) / uberDev; }
+        for (let key in lyftData) { lyftPer[key] = (lyftData[key] - lyftAvg) / lyftDev; }
+
+
+        return {
+            uber: uberPer,
+            lyft: lyftPer
+        }
+    }
+
+    function initMap(taxiZones, boroughs, uberData, lyftData) {
+        let height = 800;
+        let width = 800;
+
+        let heatMap = d3.select("#map")
+            .append('svg')
+            .attr('id', 'heat-map')
+            .attr('width', width)
+            .attr('height', height)
+            .append('g');
+
+        heatMap
+            .append('g')
+            .attr('id','map-legend')
+            .attr("transform","translate(150,180)");
+
+        let colorRange = ['#09091A','#4F4F5B','#96969C','#DDDDDD','#E097BE','#E3519F','#E70B81'];
+
+        let maps = getPercentMaps(computeMergedDicts(uberData),
+            computeMergedDicts(lyftData));
+        let uberMap = maps['uber'];
+        let lyftMap = maps['lyft'];
+
+        let zoneData = {}
+        taxiZones.features.forEach(function (d) {
+            let locID = d.properties.LocationID;
+            if (lyftData) { // Lyft is not present in all taxi zones, uber is
+                zoneData[locID] = lyftMap[locID]-uberMap[locID];
+            } else {
+                zoneData[locID] = NaN;
+            }
+        });
+
+        let zoneRange = d3.extent(d3.values(zoneData));
+        let max = zoneRange[1];
+        let min = zoneRange[0];
+
+        let colorScale = d3.scaleLinear()
+            .range(colorRange)
+            .domain([min,-1,-0.5,0,0.5,1,max]);
+
+        let legend = d3.legendColor()
+            .cells([-2,-1.5,-1,-0.5,0,0.5,1,1.5,2])
+            .orient('vertical')
+            .title("Difference in StDev")
+            .titleWidth(100)
+            .scale(colorScale);
+
+        d3.select("#map-legend").call(legend);
+
+        // inspired from
+        // http://stackoverflow.com/questions/14492284/center-a-map-in-d3-given-a-geojson-object
+        let projection = d3.geoAlbers()
+            .scale(1)
+            .translate([0, 0]);
+
+        let path = d3.geoPath().projection(projection);
+
+        let bounds = path.bounds(taxiZones),
+            scale = .95 / Math.max((bounds[1][0] - bounds[0][0]) / width,
+                    (bounds[1][1] - bounds[0][1]) / height),
+            translate = [(width - scale * (bounds[1][0] + bounds[0][0])) / 2,
+                (height - scale * (bounds[1][1] + bounds[0][1])) / 2];
+
+        projection = d3.geoAlbers()
+            .scale(scale)
+            .translate(translate);
+
+        path = path.projection(projection);
+
+        heatMap.selectAll("path")
+            .data(taxiZones.features)
+            .enter()
+            .append("path")
+            .attr("class", "zone")
+            .attr("id", function (d) {
+                return "zone-" + d.properties.LocationID;
+            })
+            .style("fill", function(d) {
+                let color = zoneData[d.properties.LocationID];
+                if (color) {
+                    return colorScale(color);
+                } else {
+                    return "white"
+                }
+            })
+            .attr("d", path);
+
+        heatMap.selectAll("path.boroughs")
+            .data(boroughs.features)
+            .enter()
+            .append("path")
+            .attr("class", "borough")
+            .attr("fill-opacity","0")
+            .attr("stroke","darkblue")
+            .attr("id", function(d) {
+                return "boro-" + d.properties.BoroCode;
+            })
+            .attr("stroke-width",1.2)
+            .attr("d", path);
+
+        d3.select("#map svg")
+            .append('text')
+            .text("LGA")
+            .attr('x',660)
+            .attr('y',440);
+
+        d3.select("#map svg")
+            .append('text')
+            .text("QUEENS")
+            .attr('x',640)
+            .attr('y',200);
+
+        d3.select("#map svg")
+            .append('text')
+            .text("THE BRONX")
+            .attr('x',460)
+            .attr('y',25);
+
+        d3.select("#map svg")
+            .append('text')
+            .text("STATEN ISLAND")
+            .attr('x',25)
+            .attr('y',630);
+
+        d3.select("#map svg")
+            .append('text')
+            .text("BROOKLYN")
+            .attr('x',250)
+            .attr('y',470);
+
+        d3.select("#map svg")
+            .append('text')
+            .text("MANHATTAN")
+            .attr('x',230)
+            .attr('y',270);
+
+        d3.select("#map svg")
+            .append('text')
+            .text("JFK")
+            .attr('x',455)
+            .attr('y',210);
+    }
+
+    /**
+     * HISTOGRAM VISUALIZATION
+     */
+    let height = 500;
+    let width = 1140;
+    let padding = 90;
+
+    let svg = d3.select("#plot")
+        .append("svg")
+        .attr("height", height)
+        .attr("width", width);
+
+    function initHistogram(uberData, lyftData) {
+
+        let timeScale = d3.scaleTime()
+            .domain([new Date(2014, 7, 1), new Date(2014, 9, 1)])
+            .range([padding, width - padding]);
+
+        let rideCounter = d3.histogram()
+            .thresholds(timeScale.ticks(61))
+            .domain(timeScale.domain())
+            .value(function (d) {
+                return d.time;
+            });
+
+        let uberRides = countRides(uberData, rideCounter);
+        let lyftRides = countRides(lyftData, rideCounter);
+
+        let uberMax = d3.max(uberRides, function (day) {
+            return day.count;
+        });
+
+        let lyftMax = d3.max(lyftRides, function (day) {
+            return day.count;
+        });
+
+        let max = Math.max(uberMax, lyftMax);
+
+        let xAxis = d3.axisBottom(timeScale)
+            .ticks(61)
+            .tickFormat((d, i) => {
+                //ignore last day in range
+                if (i == 61) {
+                    return "";
+                }
+                return d3.timeFormat("%a %b %d")(d)
+            });
+
+        svg.append("g")
+            .attr("transform", "translate(" + (0) + ", " + (height - padding) + ")")
+            .attr("class", "histogram")
+            .call(xAxis)
+            .selectAll("text")
+            .attr("dy", "2px")
+            .attr("dx", "-4px")
+            .attr("transform", "rotate(-90)")
+            .style("text-anchor", "end");
+
+        let xLabelCenter = {
+            x: padding + (width - padding * 2) / 2,
+            y: height - 10
+        };
+
+        svg.append("text")
+            .attr("dx", xLabelCenter.x)
+            .attr("dy", xLabelCenter.y)
+            .style("text-anchor", "middle")
+            .text("Day of Year");
+
+
+        let yScale = d3.scaleLinear()
+            .domain([0, max])
+            .range([height - padding, padding]);
+
+        let yAxis = d3.axisLeft(yScale);
+        svg.append("g").call(yAxis).attr("transform", "translate(" + padding + " 0)");
+
+        let yLabelCenter = {
+            x: 25,
+            y: (height - padding*2) / 2 + padding
+        };
+
+        svg.append("text")
+            .attr("dx", yLabelCenter.x)
+            .attr("dy", yLabelCenter.y)
+            .style("text-anchor", "middle")
+            .attr("transform", "rotate(-90," + yLabelCenter.x + "," + yLabelCenter.y + ")")
+            .text("Time of Day");
+
+        histogram(uberRides, svg, "#09091A", yScale);
+        histogram(lyftRides, svg, "#E70B81", yScale);
+    }
+
+
+    function histogram(days, svg, color, yScale) {
+
+        let xBands = d3.scaleBand()
+            .domain(days.map(function (day) {
+                return day.x0;
+            }))
+            .range([padding, width - padding]);
+
+        days.forEach(function (day) {
+            svg.append("rect")
+                .attr("x", xBands(day.x0))
+                .attr("y", yScale(day.count))
+                .attr("width", xBands.bandwidth() - 2)
+                .attr("height", yScale(0) - yScale(day.count))
+                .style("fill", color);
+
+            svg.append("text").attr("class", "label")
+                .attr("x", xBands(day.x0) + xBands.bandwidth() / 2)
+                .attr("y", yScale(0) + (padding / 2));
+        });
+
+
+    }
+
+    function countRides(data, counter) {
+
+        let rides = counter(data);
+
+        rides = rides.map((day) => {
+            return {
+                x0: day.x0,
+                x1: day.x1,
+                count: day.reduce((accum, hour) => {
+                    return accum + hour.count;
+                }, 0)
+            }
+        });
+
+        return rides;
+    }
+
+    /**
+     * MATRIX VISUALIZATION
+     */
+    function initMatrix(uberData, lyftData) {
+
+        let chartPadding = {
+            left: 80,
+            right: 130,
+            top: 20,
+            bottom: 120
+        };  //px
+
+        let padding = 2; //px
+        let cellLen = 15; //px
+        let rows = 24; //hours
+        let cols = 61; //days
+
+        let height = chartPadding.top + chartPadding.bottom + (cellLen + padding) * rows + padding;
+        let width = chartPadding.left + chartPadding.right + (cellLen + padding) * cols + padding;
+
+        let svg = d3.select("#matrix")
+            .append("svg")
+            .attr("width", width)
+            .attr("height", height);
+
+        svg.append("rect")
+            .attr("width", "100%")
+            .attr("height", "100%")
+            .attr("fill", "#f0f0f0");
+
+        svg.append('g')
+            .attr('id', 'matrix-legend')
+            .attr("transform", "translate("+ (width-chartPadding.right + 30) + ","+ ((height-chartPadding.top-chartPadding.bottom)/2+chartPadding.top-50)+")");
+
+        function getRectBounds(col, row, colScale, rowScale) {
+            return {
+                x: colScale(col), //- cellLen/2,
+                y: rowScale(row) //- cellLen/2
+            }
+        }
+
+        let colDayScale = d3.scaleLinear()
+            .domain([0, cols])
+            .range([chartPadding.left + padding, width - chartPadding.right]);
+
+        let rowHourScale = d3.scaleLinear()
+            .domain([0, rows])
+            .range([height - chartPadding.bottom - padding, chartPadding.top]);
+
+        let dayScale = d3.scaleTime()
+            .domain([new Date(2014, 7, 1), new Date(2014, 9, 1)])
+            .range([chartPadding.left + padding, width - chartPadding.right]);
+
+        let dayCounter = d3.histogram()
+            .thresholds(dayScale.ticks(61))
+            .domain(dayScale.domain())
+            .value(function (d) {
+                return d.time;
+            });
+
+        let hourCounter = d3.histogram()
+            .thresholds(rowHourScale.ticks(24))
+            .domain(rowHourScale.domain())
+            .value(function (d) {
+                return d.time.getHours();
+            });
+
+        let bucketData = function (data) {
+            return dayCounter(data).map((day) => {
+                return hourCounter(day);
+            })
+        };
+
+        let uberNorm = uberData.map(function (d, i) {
+            return uberData[i].count;
+        });
+        let uberMean = d3.mean(uberNorm);
+        let uberStd = d3.deviation(uberNorm);
+        uberNorm = uberNorm.map(function (c) {
+            return (c - uberMean) / uberStd;
+        });
+
+        let lyftNorm = lyftData.map(function (d, i) {
+            return lyftData[i].count;
+        });
+        let lyftMean = d3.mean(lyftNorm);
+        let lyftStd = d3.deviation(lyftNorm);
+        lyftNorm = lyftNorm.map(function (c) {
+            return (c - lyftMean) / lyftStd;
+        });
+
+
+        let diffArray = uberNorm.map(function (d, i) {
+            return lyftNorm[i] - uberNorm[i];
+        });
+        let max = d3.max(diffArray);
+        let min = d3.min(diffArray);
+        let diffCounts = [];
+
+        while (diffArray.length) diffCounts.push(diffArray.splice(0, 24));
+
+        let colorScale = d3.scaleLinear()
+            .domain([min, 0, max])
+            .range(["#09091A", "#DDDDDD", "#E70B81"]);
+
+        let legend = d3.legendColor()
+            .cells([min, -3, -2, -1, 0, 1, 2, 3, max])
+            .orient('vertical')
+            .title("Difference in StDev")
+            .titleWidth(100)
+            .scale(colorScale);
+
+        d3.select("#matrix-legend").call(legend);
+
+        uberData = bucketData(uberData);
+        lyftData = bucketData(lyftData);
+
+
+        /*---------------
+         // y axis stuff
+         ----------------*/
+        let timeLabels = d3.timeHour
+            .every(1)
+            .range(new Date(2017, 1, 1), new Date(2017, 1, 2))
+            .map((x) => d3.timeFormat("%I %p")(x));
+
+        let rowHourAxis = d3.axisLeft(rowHourScale)
+            .ticks(24)
+            .tickFormat((d, i) => timeLabels[d]);
+
+        svg.append("g")
+            .attr("transform", "translate(" + chartPadding.left + ",0)")
+            .attr("class", "matrix")
+            .call(rowHourAxis)
+            .selectAll(".tick text")
+            .attr("dy", "9px")
+            .attr("dx", "5px");
+
+        let yLabelCenter = {
+            x: 27,
+            y: (height - chartPadding.top - chartPadding.bottom) / 2 + chartPadding.top
+        };
+
+        svg.append("text")
+            .attr("dx", yLabelCenter.x)
+            .attr("dy", yLabelCenter.y)
+            .style("text-anchor", "middle")
+            .attr("transform", "rotate(-90," + yLabelCenter.x + "," + yLabelCenter.y + ")")
+            .text("Time of Day");
+
+        /*---------------
+         // x axis stuff
+         ----------------*/
+
+        let colDayAxis = d3.axisBottom(dayScale)
+            .tickFormat((d, i) => {
+                //ignore last day in range
+                if (i == 61) {
+                    return "";
+                }
+                return d3.timeFormat("%a %b %d")(d)
+            })
+            .ticks(61);
+
+        svg.append("g")
+            .attr("transform", "translate(" + (0) + ", " + (height - chartPadding.bottom + 20) + ")")
+            .attr("class", "matrix")
+            .call(colDayAxis)
+            .selectAll("text")
+            .attr("dy", "2px")
+            .attr("dx", "1px")
+            .attr("transform", "rotate(-90)")
+            .style("text-anchor", "end");
+
+        let xLabelCenter = {
+            x: chartPadding.left + (width - chartPadding.left - chartPadding.right) / 2,
+            y: height - 20
+        };
+
+        svg.append("text")
+            .attr("dx", xLabelCenter.x)
+            .attr("dy", xLabelCenter.y)
+            .style("text-anchor", "middle")
+            .text("Day of Year");
+
+        uberData.forEach((c, ci) => {
+            c.forEach((r, ri) => {
+                let xy = getRectBounds(ci, ri, colDayScale, rowHourScale);
+                svg.append("rect")
+                    .attr("rx", 2)
+                    .attr("ry", 2)
+                    .attr("x", xy.x)
+                    .attr("y", xy.y)
+                    .attr("width", cellLen)
+                    .attr("height", cellLen)
+                    //no data present for lyft on last hour of last day - ignore
+                    .style("fill", (ci == 60 && ri == 23) ? "white" : colorScale(diffCounts[ci][ri]));
+            })
+        })
+
+    }
+
+    /**
+     * INITIALIZATION
+     */
+    (function() {
+    let dateFormatter = d3.timeParse("%m/%d/%Y %H:%M");
+
+    function formatTimeData(dateFormatter, d) {
+        return {
+            time: dateFormatter(d["Date/Time"]),
+            count: Number(d["Count"])
+        }
+    }
+
+    function formatRegionData(d) {
+        return {
+            region: Number(d["Region"]),
+            count: Number(d["Count"])
+        }
+    }
+
+    d3.queue()
+        .defer(d3.csv, "/data/aggregated/time/uber-raw-data-aug14.csv")
+        .defer(d3.csv, "/data/aggregated/time/uber-raw-data-sep14.csv")
+        .defer(d3.csv, "/data/aggregated/time/other-Lyft_B02510.csv")
+        .await(function (error, uberAug, uberSep, lyft) {
+            if (error) {
+                console.error("Failed to load files");
+            } else {
+                let formatter = formatTimeData.bind(null, dateFormatter);
+                uberAug = uberAug.map(formatter);
+                uberSep = uberSep.map(formatter);
+                let lyftData = lyft.map(formatter);
+
+                let uberData = uberAug.slice(0).concat(uberSep);
+
+                initHistogram(uberData, lyftData);
+                initMatrix(uberData, lyftData);
+            }
+        });
+
+    d3.queue()
+        .defer(d3.json, "data/taxi_zones.geo.json")
+        .defer(d3.json, "data/nyc-boroughs.geojson")
+        .defer(d3.csv, "/data/aggregated/regions/uber-raw-data-aug14.csv")
+        .defer(d3.csv, "/data/aggregated/regions/uber-raw-data-sep14.csv")
+        .defer(d3.csv, "/data/aggregated/regions/other-Lyft_B02510.csv")
+        .await(function (error, taxiZones, boroughs, uberAug, uberSep, lyft) {
+            if (error) {
+                console.error("Failed to load files");
+            } else {
+                uberAug = uberAug.map(formatRegionData);
+                uberSep = uberSep.map(formatRegionData);
+                let lyftData = lyft.map(formatRegionData);
+
+                let uberData = uberAug.slice(0).concat(uberSep);
+
+
+                initMap(taxiZones, boroughs, uberData, lyftData);
+            }
+        });
+})();
+</script>
+</body>
+</html>

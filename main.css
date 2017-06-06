@@ -1,0 +1,74 @@
+div {
+  color: #4c4c4c;
+}
+.uber {
+  color: #09091a;
+}
+.lyft {
+  color: #E70B81;
+}
+body {
+  font-family: 'Titillium Web', sans-serif;
+  background-color: #f0f0f0;
+  margin: 0 50px 0 50px;
+}
+h1 {
+  margin: 10px 0 0 0;
+  font-size: 3em;
+}
+h2 {
+  font-size: 1.5em;
+  line-height: 1.1em;
+  margin: 0 0 0 0;
+  font-weight: 300;
+}
+.page-title {
+  margin-bottom: 40px;
+}
+.section {
+  padding: 20px 0 20px 0;
+}
+.section .header {
+  font-size: 1.95em;
+}
+.section .header::before {
+  content: "\27A4";
+  padding-right: 10px;
+  padding-left: 5px;
+}
+.section .text {
+  padding: 0 50px 0 50px;
+  text-align: justify;
+}
+svg {
+  color: black;
+}
+.graphic {
+  text-align: center;
+}
+/**
+MAP STYLING
+ */
+rect.bar {
+  fill: #4169e1;
+  fill-opacity: 0.5;
+}
+path.zone {
+  fill: #fff;
+  stroke: #888;
+}
+/**
+MATRIX STYLING
+ */
+.matrix .tick line {
+  display: none;
+}
+.matrix .domain {
+  display: none;
+}
+/**
+HISTOGRAM STYLING
+ */
+.histogram .tick line {
+  display: none;
+}
